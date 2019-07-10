@@ -2,7 +2,7 @@
     <a href="https://github.com/yii2tech" target="_blank">
         <img src="https://avatars2.githubusercontent.com/u/12951949" height="100px">
     </a>
-    <h1 align="center">File Storage Extension for Yii 2</h1>
+    <h1 align="center">Lite version of package yii2tech/file-storage the file storage abstraction layer for Yii2</h1>
     <br>
 </p>
 
@@ -23,6 +23,7 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
+php composer.phar config repositories.fslite vcs https://github.com/sup-ham/yii2-filestorage.git
 php composer.phar require --prefer-dist yii2tech/file-storage
 ```
 
@@ -32,37 +33,17 @@ or add
 "yii2tech/file-storage": "*"
 ```
 
-to the require section of your composer.json.
-
-If you wish to use Amazon S3 storage, you should also install [aws/aws-sdk-php](https://github.com/aws/aws-sdk-php) version 2.
-Either run
+to the require section and add new repo url
 
 ```
-php composer.phar require --prefer-dist aws/aws-sdk-php:~2.0
+  "repositories" : [
+    {
+      "type": "vcs",
+      "url": "https://github.com/sup-ham/yii2-filestorage.git"
+    }
+  ]
 ```
-
-or add
-
-```json
-"aws/aws-sdk-php": "~2.0"
-```
-
-to the require section of your composer.json.
-
-If you wish to use MongoDB storage, you should also install [yiisoft/yii2-mongodb](https://github.com/yiisoft/yii2-mongodb) version 2.1.
-Either run
-
-```
-php composer.phar require --prefer-dist yiisoft/yii2-mongodb:~2.1.0
-```
-
-or add
-
-```json
-"yiisoft/yii2-mongodb": "2.1.0"
-```
-
-to the require section of your composer.json.
+to your composer.json file
 
 
 Usage
@@ -118,9 +99,6 @@ echo $bucket->getFileUrl('file.txt'); // outputs: 'http://domain.com/files/f/i/f
 
 Following file storages are available with this extension:
  - [[\yii2tech\filestorage\local\Storage]] - stores files on the OS local file system.
- - [[\yii2tech\filestorage\sftp\Storage]] - stores files using SSH2 SFTP.
- - [[\yii2tech\filestorage\amazon\Storage]] - stores files using Amazon simple storage service (S3).
- - [[\yii2tech\filestorage\mongodb\Storage]] - stores files using MongoDB GridFS.
  - [[\yii2tech\filestorage\hub\Storage]] - allows combination of different file storages.
 
 Please refer to the particular storage class for more details.
@@ -130,100 +108,7 @@ required with this package by default, to be installed. Please check particular 
 for the details.
 
 
-## Abstraction usage <span id="abstraction-usage"></span>
-
-Each provided storage implements same interface for the files processing. Thus each storage can substitute another one,
-unless program code follows this interface. This allows you to switch between different storages without being need to
-adjust program source code. For example, at production server you may need to use SFTP for files storing and your application
-config looks like following:
-
-```php
-return [
-    'components' => [
-        'fileStorage' => [
-            'class' => 'yii2tech\filestorage\sftp\Storage',
-            'ssh' => [
-                'host' => 'file.server.com',
-                'username' => 'user',
-                'password' => 'some-password',
-            ],
-            'basePath' => '/var/www/html/files',
-            'baseUrl' => 'http://file.server.com/files',
-            'buckets' => [
-                'temp',
-                'item',
-            ]
-        ],
-        // ...
-    ],
-    // ...
-];
-```
-
-However, at development environment you may use simple local file storage instead:
-
-```php
-return [
-    'components' => [
-        'fileStorage' => [
-            'class' => 'yii2tech\filestorage\local\Storage',
-            'basePath' => '@webroot/files',
-            'baseUrl' => '@web/files',
-            'buckets' => [
-                'temp',
-                'item',
-            ]
-        ],
-        // ...
-    ],
-    // ...
-];
-```
-
-You can also combine several different storages using [[\yii2tech\filestorage\hub\Storage]], if necessary:
-
-```php
-return [
-    'components' => [
-        'fileStorage' => [
-            'class' => 'yii2tech\filestorage\hub\Storage',
-            'storages' => [
-                [
-                    'class' => 'yii2tech\filestorage\sftp\Storage',
-                    'ssh' => [
-                        'host' => 'file.server.com',
-                        'username' => 'user',
-                        'password' => 'some-password',
-                    ],
-                    'basePath' => '/var/www/html/files',
-                    'baseUrl' => 'http://file.server.com/files',
-                    'buckets' => [
-                        'item',
-                    ]
-                ],
-                [
-                    'class' => 'yii2tech\filestorage\local\Storage',
-                    'basePath' => '@webroot/files',
-                    'baseUrl' => '@web/files',
-                    'buckets' => [
-                        'temp',
-                    ]
-                ]
-            ],
-        ],
-        // ...
-    ],
-    // ...
-];
-```
-
-
 ## Accessing files by URL <span id="accessing-files-by-url"></span>
-
-Almost all file storage implementation, implemented in this extension, provide mechanism for accessing stored files
-via web URL. Actual mechanism implementation may vary depending on particular storage. For example: [[\yii2tech\filestorage\local\Storage]]
-allows setup of the URL leading to its root folder, creating URL for particular file appending its name to base URL,
-while [[\yii2tech\filestorage\amazon\Storage]] uses S3 built-in object URL composition.
 
 In order to get URL leading to the stored file, you should use [[\yii2tech\filestorage\BucketInterface::getFileUrl()]] method:
 
