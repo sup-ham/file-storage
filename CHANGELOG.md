@@ -1,6 +1,11 @@
 Yii 2 File Storage extension Change Log
 =======================================
 
+Dev core version, July 10, 2019
+-----------------------
+  - remove .github folder
+  - remove mongodb, sftp, amazon, hub
+
 1.1.4, February 9, 2018
 -----------------------
 
