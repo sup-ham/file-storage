@@ -27,10 +27,5 @@
     ],
     "autoload": {
         "psr-4": { "yii2tech\\filestorage\\": "src" }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0.x-dev"
-        }
     }
 }
